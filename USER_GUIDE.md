@@ -24,7 +24,7 @@
    - [Clone the repository](#51-clone-the-repository)
    - [Create the virtual environment](#52-create-the-virtual-environment)
    - [Install dependencies](#53-install-dependencies)
-   - [Configure the `.env` file](#54-configure-the-env-file)
+   - [Configure your Groq API key](#54-configure-your-groq-api-key)
 6. [Running the Application](#6-running-the-application)
 7. [Testing the Dashboard — Walkthrough](#7-testing-the-dashboard--walkthrough)
    - [Health check verification](#71-health-check-verification)
@@ -235,51 +235,18 @@ You can verify the key packages are present:
 pip show fastapi uvicorn openai pydantic gitpython
 ```
 
-### 5.4 Configure the `.env` file
+### 5.4 Configure your Groq API key
 
-Copy the provided template to a real `.env` file:
+No configuration files needed. The Groq API key is entered directly in the **sidebar** of the web interface — no `.env` file required.
 
-```bash
-# macOS / Linux
-cp .env.example .env
+1. Get a free key at [console.groq.com/keys](https://console.groq.com/keys).
+2. Start the server (see Section 6).
+3. Open `http://127.0.0.1:8000/` in your browser.
+4. In the **Groq API Key** field in the left sidebar, paste your key (`gsk_...`). The label changes to **✓ Key set**.
 
-# Windows
-copy .env.example .env
-```
+The key travels to the backend as the `X-Groq-Api-Key` HTTP request header on every API call — it is **never written to disk** and does not require a server restart.
 
-Open `.env` in your editor and fill in the values:
-
-```dotenv
-# ── Application ───────────────────────────────────────────────────────────────
-APP_NAME="OmniDev"
-APP_VERSION="1.0.0"
-DEBUG=false
-
-# ── Server ────────────────────────────────────────────────────────────────────
-HOST=0.0.0.0
-PORT=8000
-
-# ── Groq API (primary LLM — free tier at console.groq.com/keys) ───────────────
-GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-GROQ_MODEL=openai/gpt-oss-20b
-GROQ_MAX_TOKENS=4096
-GROQ_TEMPERATURE=0.3
-
-# ── OpenAI (optional — only needed if using llm_provider="openai") ────────────
-OPENAI_API_KEY=sk-...
-OPENAI_MODEL=gpt-4o-mini
-
-# ── Repository cloning ────────────────────────────────────────────────────────
-CLONE_BASE_DIR=/tmp/onboarding_repos
-
-# ── CORS ──────────────────────────────────────────────────────────────────────
-CORS_ORIGINS=["*"]
-```
-
-**Key notes:**
-- `GROQ_API_KEY` is the only field that matters for full AI-powered output. Everything else has sensible defaults.
-- If you do not have a Groq key, leave `GROQ_API_KEY` blank and use `llm_provider = mock` in the UI — the entire platform remains functional.
-- API keys can also be supplied **per-request** via the `X-Groq-Api-Key` HTTP header, which the UI sidebar uses. You do not need to restart the server when changing keys.
+> **No key?** Set **LLM Provider** to `mock` in the sidebar. Every feature — docs, diagrams, Good First Issues, and chat — works offline with deterministic template output. No API key required.
 
 ---
 
@@ -442,8 +409,8 @@ OmniDev has robust error handling at both the backend (HTTP status codes) and fr
 
 1. Clear the Groq API Key field entirely.
 2. Click **Generate Onboarding Docs** with provider `groq`.
-3. **Expected result:** The backend returns HTTP 400 with detail `"GROQ_API_KEY is not set..."`. The toast shows:
-   > **Pipeline failed** — GROQ_API_KEY is not set. Add it to your .env file, environment, or supply it via the X-Groq-Api-Key request header.
+3. **Expected result:** The backend returns HTTP 400. The toast shows:
+   > **Pipeline failed** — GROQ_API_KEY is not set. Enter your key in the sidebar or switch the provider to `mock`.
 
 #### Test C — Mock provider (no API key required)
 
@@ -512,7 +479,7 @@ curl -X POST http://127.0.0.1:8000/api/v1/onboarding/full-pipeline \
 | Symptom | Likely Cause | Fix |
 |---|---|---|
 | `ModuleNotFoundError: No module named 'fastapi'` | Virtual environment not activated, or `pip install` not run | Run `source venv/bin/activate` then `pip install -r requirements.txt` |
-| `Address already in use` on startup | Port 8000 is occupied by another process | `lsof -i :8000` (macOS/Linux) or `netstat -ano \| findstr :8000` (Windows), then kill the process — or set `PORT=8001` in `.env` |
+| `Address already in use` on startup | Port 8000 is occupied by another process | `lsof -i :8000` (macOS/Linux) or `netstat -ano \| findstr :8000` (Windows), then kill the offending process and restart |
 | Health check shows **Offline** | Server URL mismatch or server not running | Ensure `run.py` is running; check the Server URL in the sidebar matches the actual port |
 | Toast: "Invalid or missing Groq API Key" | Key is expired, revoked, or typed incorrectly | Re-copy the key from [console.groq.com/keys](https://console.groq.com/keys) |
 | Toast: "GROQ_API_KEY is not set" | API key field is empty and provider is `groq` | Enter the key in the sidebar, or switch provider to `mock` |

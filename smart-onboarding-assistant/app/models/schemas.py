@@ -158,7 +158,7 @@ class StarterTask(BaseModel):
     target: str = Field(description="File path or directory the developer should edit (e.g. 'app/routers/auth.py').")
     difficulty: str = Field(
         default="beginner",
-        description="Estimated difficulty: beginner | intermediate.",
+        description="Estimated difficulty: beginner | intermediate | advanced.",
     )
     steps: List[str] = Field(
         description="Ordered, concrete implementation steps. Each step should be a single actionable instruction.",

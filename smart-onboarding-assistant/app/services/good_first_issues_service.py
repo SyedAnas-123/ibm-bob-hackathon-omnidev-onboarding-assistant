@@ -31,9 +31,9 @@ from app.models.schemas import (
 
 def _build_system_prompt() -> str:
     return textwrap.dedent("""
-        You are a senior open-source maintainer who excels at writing beginner-friendly
-        contribution tasks.  When asked, you produce a JSON array of starter tasks for a
-        new developer joining the project.
+        You are a senior open-source maintainer who excels at writing contribution tasks
+        for developers of all experience levels.  When asked, you produce a JSON array of
+        starter tasks for a new developer joining the project.
 
         Rules:
         - Each task must be specific to the actual files and technology in the repository.
@@ -43,7 +43,12 @@ def _build_system_prompt() -> str:
         - Each element must have exactly these keys:
             title, objective, target, difficulty, steps
           where "steps" is a JSON array of strings and "difficulty" is one of:
-            "beginner" or "intermediate".
+            "beginner", "intermediate", or "advanced".
+        - Assign difficulty honestly:
+            beginner    — < 30 min, no deep domain knowledge required (e.g. docs, tests, config)
+            intermediate — 30–90 min, requires understanding one subsystem (e.g. add a feature, add CI)
+            advanced    — > 90 min, requires cross-cutting changes or deep domain knowledge (e.g. refactor, new service, performance work)
+        - Vary the difficulty across the tasks so the set covers multiple skill levels.
     """).strip()
 
 
@@ -98,7 +103,8 @@ def _build_user_prompt(request: GoodFirstIssuesRequest) -> str:
         ### Output format
         Return ONLY a JSON array of {request.num_tasks} objects, each with keys:
           title, objective, target, difficulty, steps
-        where `steps` is an array of strings and `difficulty` is "beginner" or "intermediate".
+        where `steps` is an array of strings and `difficulty` is one of "beginner", "intermediate", or "advanced".
+        Vary the difficulty across the {request.num_tasks} tasks — do not make them all the same level.
     """).strip()
 
 
@@ -333,13 +339,14 @@ def _mock_tasks(a: RepoAnalysisResult, num_tasks: int) -> List[StarterTask]:
                 "of their local environment."
             ),
             target="Dockerfile",
-            difficulty="intermediate",
+            difficulty="advanced",
             steps=[
                 "Create a `Dockerfile` in the repository root.",
                 f"Choose a suitable base image for {a.primary_language or 'the project'} (e.g. `python:3.12-slim`).",
                 "Copy source files, install dependencies, and set the `CMD` to the main entry point.",
-                "Build the image locally: `docker build -t {a.repo_name.lower()} .`",
+                f"Build the image locally: `docker build -t {a.repo_name.lower()} .`",
                 f"Run it and verify it works: `docker run --rm {a.repo_name.lower()}`",
+                "Add a `.dockerignore` to exclude `venv/`, `__pycache__/`, and test files.",
                 "Optionally add a `docker-compose.yml` for multi-service setups.",
             ],
         ))

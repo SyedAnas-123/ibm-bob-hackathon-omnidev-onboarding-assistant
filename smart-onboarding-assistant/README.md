@@ -26,7 +26,7 @@
    - [Clone the repository](#61-clone-the-repository)
    - [Create a virtual environment](#62-create-a-virtual-environment)
    - [Install dependencies](#63-install-dependencies)
-   - [Configure environment variables](#64-configure-environment-variables)
+   - [Configure your Groq API key](#64-configure-your-groq-api-key)
    - [Run the application](#65-run-the-application)
 7. [Accessing the Interface](#7-accessing-the-interface)
 8. [API Reference](#8-api-reference)
@@ -191,50 +191,13 @@ openai==1.30.1
 python-dotenv==1.0.1
 ```
 
-### 6.4 Configure environment variables
+### 6.4 Configure your Groq API key
 
-Copy the example file and edit it with your values:
+No configuration files needed. Once the server is running, paste your Groq API key directly into the **Groq API Key** field in the sidebar of the web interface. The key is sent per-request via the `X-Groq-Api-Key` header — it is never written to disk.
 
-```bash
-cp .env.example .env
-```
+Get a free key at [console.groq.com/keys](https://console.groq.com/keys).
 
-Open `.env` in your editor. The file is self-documented — key settings are:
-
-```dotenv
-# ── Application ───────────────────────────────────────────────────────────────
-APP_NAME="OmniDev"
-APP_VERSION="1.0.0"
-DEBUG=false
-
-# ── Server ────────────────────────────────────────────────────────────────────
-HOST=0.0.0.0
-PORT=8000
-
-# ── Groq  (primary LLM — free tier available) ────────────────────────────────
-# Get your key: https://console.groq.com/keys
-GROQ_API_KEY=gsk_...
-GROQ_MODEL=openai/gpt-oss-20b
-GROQ_MAX_TOKENS=4096
-GROQ_TEMPERATURE=0.3
-
-# ── OpenAI  (optional secondary LLM) ─────────────────────────────────────────
-OPENAI_API_KEY=sk-...
-OPENAI_MODEL=gpt-4o-mini
-OPENAI_MAX_TOKENS=4096
-OPENAI_TEMPERATURE=0.3
-
-# ── Repository Analysis ───────────────────────────────────────────────────────
-# Temporary directory used when cloning remote GitHub repositories
-CLONE_BASE_DIR=/tmp/onboarding_repos
-
-# ── CORS ──────────────────────────────────────────────────────────────────────
-CORS_ORIGINS=["*"]
-```
-
-> **Tip:** The `GROQ_API_KEY` and `OPENAI_API_KEY` fields are optional.
-> Set `llm_provider` to `"mock"` in any API request to skip LLM calls entirely.
-> API keys can also be passed per-request via the `X-Groq-Api-Key` HTTP header.
+> **No key?** Set **LLM Provider** to `mock` in the sidebar — the entire platform works offline with deterministic template output.
 
 ### 6.5 Run the application
 
@@ -369,7 +332,7 @@ smart-onboarding-assistant/
 ├── main.py                    # FastAPI application factory & entry point
 ├── run.py                     # Launcher script (Uvicorn wrapper with graceful shutdown)
 ├── requirements.txt           # Direct production dependencies
-├── .env.example               # Environment variable template — copy to .env
+├── .env.example               # Server-side config template (optional — UI sidebar handles keys)
 │
 ├── app/
 │   ├── config.py              # Pydantic Settings — reads .env, provides get_settings()
