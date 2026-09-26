@@ -1,0 +1,18 @@
+﻿# =============================================================================
+# OmniDev — root .gitignore
+# =============================================================================
+
+# ── Bob AI agent artefacts (exclude artifacts, keep bob_sessions) ─────────────
+.bob/
+# bob_sessions/ is intentionally tracked
+
+# ── OS-generated files ────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Editor / IDE ──────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*~
