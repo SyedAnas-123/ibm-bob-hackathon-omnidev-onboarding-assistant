@@ -1,0 +1,98 @@
+﻿# =============================================================================
+# OmniDev — .gitignore
+# Python / FastAPI project
+# =============================================================================
+
+# ── Virtual environments ──────────────────────────────────────────────────────
+venv/
+.venv/
+env/
+.env_/
+ENV/
+
+# ── Environment & secrets ─────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# ── Python bytecode & caches ──────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+*.pyd
+
+# ── Distribution / packaging ──────────────────────────────────────────────────
+dist/
+build/
+*.egg-info/
+*.egg
+.eggs/
+MANIFEST
+
+# ── pip / setuptools ──────────────────────────────────────────────────────────
+pip-log.txt
+pip-delete-this-directory.txt
+.installed.cfg
+
+# ── pytest / test artefacts ───────────────────────────────────────────────────
+.pytest_cache/
+.cache/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+nosetests.xml
+
+# ── mypy / type checking ──────────────────────────────────────────────────────
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+
+# ── Linting & formatting ──────────────────────────────────────────────────────
+.ruff_cache/
+
+# ── Jupyter Notebooks ─────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb
+
+# ── Temporary clone directories (repo analyser) ───────────────────────────────
+/tmp/
+onboarding_repos/
+
+# ── IDE / editor ──────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+*.sublime-project
+*.sublime-workspace
+
+# ── OS-generated files ────────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Static build output ───────────────────────────────────────────────────────
+frontend/__pycache__/
+
+# -- Bob AI agent artefacts --------------------------------------------------
+.bob/
