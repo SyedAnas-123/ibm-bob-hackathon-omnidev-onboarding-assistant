@@ -362,7 +362,18 @@ async def clone_and_analyze(
     os.makedirs(clone_base, exist_ok=True)
     clone_dir = tempfile.mkdtemp(dir=clone_base)
     try:
-        git.Repo.clone_from(github_url, clone_dir, branch=branch, depth=1)
+        clone_kwargs: dict = {"depth": 1}
+        if branch:
+            # Try the requested branch; if it fails, retry without specifying one
+            # so git falls back to the remote's default branch (master, main, etc.)
+            try:
+                git.Repo.clone_from(github_url, clone_dir, branch=branch, **clone_kwargs)
+            except git.GitCommandError:
+                shutil.rmtree(clone_dir, ignore_errors=True)
+                clone_dir = tempfile.mkdtemp(dir=clone_base)
+                git.Repo.clone_from(github_url, clone_dir, **clone_kwargs)
+        else:
+            git.Repo.clone_from(github_url, clone_dir, **clone_kwargs)
     except git.GitCommandError as exc:
         shutil.rmtree(clone_dir, ignore_errors=True)
         raise RuntimeError(f"Git clone failed: {exc}") from exc
